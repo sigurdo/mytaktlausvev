@@ -8,7 +8,18 @@ import toml
 import re
 
 
-def build_website(clean=False):
+class TomlDict:
+    def __init__(self, toml_dict):
+        self.toml_dict = toml_dict
+    
+    def __getitem__(self, key):
+        result = self.toml_dict
+        for key_part in key.split("."):
+            result = result[key_part]
+        return result
+
+
+def build_website(clean=False, config_file="config.toml"):
     os.chdir(os.path.dirname(__file__))
 
     if clean:
@@ -16,8 +27,10 @@ def build_website(clean=False):
 
     shutil.copytree("website_source", "website_build", dirs_exist_ok=True)
 
-    with open("config.toml", "r") as file:
-        config = toml.load(file)
+    shutil.copytree("static_files", "website_build/site/static", dirs_exist_ok=True)
+
+    with open(config_file, "r") as file:
+        config = TomlDict(toml.load(file))
     
     for dirpath, dirnames, filenames in os.walk("website_build"):
         for filename in filenames:
@@ -30,10 +43,10 @@ def build_website(clean=False):
                     match = re.search(r"\(MYTAKTLAUSVEV_VARIABLE\((.+?)\)\)", build)
                     if match is None:
                         break
-                    category, variable = match.group(1).split(".")
+                    variable = match.group(1)
                     print(filepath, end=":\n")
-                    print("Replacing", match.group(1), "with", config[category][variable])
-                    build = build[:match.start()] + config[category][variable] + build[match.end():]
+                    print("Replacing", variable, "with", config[variable])
+                    build = build[:match.start()] + config[variable] + build[match.end():]
                 with open(filepath, "w") as file:
                     file.write(build)
 
@@ -41,7 +54,10 @@ def build_website(clean=False):
 if __name__ == "__main__":
     argument_parser = argparse.ArgumentParser()
     argument_parser.add_argument("--clean", action="store_true")
+    argument_parser.add_argument("--config-file", "-f", required=False)
     arguments = argument_parser.parse_args()
-    build_website(
-            clean=arguments.clean
-        )
+    kwargs = {}
+    kwargs["clean"] = arguments.clean
+    if arguments.config_file:
+        kwargs["config_file"] = arguments.config_file
+    build_website(**kwargs)

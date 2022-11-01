@@ -1,4 +1,9 @@
 [appearance]
-navbar_title = "Studentorchesteret Dei Taktlause"
 base_page_title = "Studentorchesteret Dei Taktlause"
 primary_color = "#A50105"
+favicon = "images/taktlausfavicon.ico"
+
+[appearance.navbar]
+logo = "images/taktlauslogo.svg"
+logo_santa_hat = "images/taktlauslogo_sant_hat.svg"
+title = "Studentorchesteret Dei Taktlause"
