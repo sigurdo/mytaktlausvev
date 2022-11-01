@@ -1,0 +1,10 @@
+{
+    "emeraldwalk.runonsave": {
+        "commands": [
+            {
+                "match": "config.toml",
+                "cmd": "./build_website.py"
+            }
+        ],
+    }
+}
