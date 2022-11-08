@@ -4,7 +4,7 @@ import os
 import subprocess
 import shutil
 import argparse
-import toml
+import tomlkit
 import re
 
 
@@ -27,9 +27,9 @@ class TomlDict:
             else:
                 if not (
                     (key_part in sub_dict) and
-                    (type(sub_dict[key_part]) == dict)
+                    (type(sub_dict[key_part]) == tomlkit.items.Table)
                 ):
-                    sub_dict[key_part] = {}
+                    sub_dict[key_part] = tomlkit.table()
                 sub_dict = sub_dict[key_part]
     
     def update(self, other_toml_dict):
@@ -37,13 +37,16 @@ class TomlDict:
             for key in other_raw_dict:
                 if (
                     (key in raw_dict) and
-                    (type(raw_dict[key]) == dict) and
-                    (type(other_raw_dict[key]) == dict)
+                    (type(raw_dict[key]) == tomlkit.items.Table) and
+                    (type(other_raw_dict[key]) == tomlkit.items.Table)
                 ):
                     recurse(raw_dict[key], other_raw_dict[key])
                 else:
                     raw_dict[key] = other_raw_dict[key]
         recurse(self.raw_dict, other_toml_dict.raw_dict)
+    
+    def get_tomlkit_document(self):
+        return self.raw_dict
 
 
 def build_website(clean=False, config_files=["config.toml"]):
@@ -63,7 +66,7 @@ def build_website(clean=False, config_files=["config.toml"]):
     config = TomlDict({})
     for config_file in config_files:
         with open(config_file, "r") as file:
-            config.update(TomlDict(toml.load(file)))
+            config.update(TomlDict(tomlkit.load(file)))
     
     for dirpath, dirnames, filenames in os.walk("website_build"):
         for filename in filenames:

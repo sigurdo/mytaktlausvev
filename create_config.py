@@ -5,7 +5,7 @@ import inspect
 import os
 import subprocess
 import time
-import toml
+import tomlkit
 from build_website import TomlDict
 
 class VariableValidator:
@@ -96,12 +96,12 @@ def create_config():
 
     if output_file_is_default:
         with open("config.toml", "r") as file:
-            previous_config = TomlDict(toml.load(file))
+            previous_config = TomlDict(tomlkit.load(file))
             previous_config.update(toml_dict)
             toml_dict = previous_config
 
     with open(output_file_path, "w") as file:
-        toml.dump(toml_dict.raw_dict, file)
+        tomlkit.dump(toml_dict.get_tomlkit_document(), file)
 
     config_files_flag = "" if output_file_is_default else f"-f config.toml {output_file_path} "
 
