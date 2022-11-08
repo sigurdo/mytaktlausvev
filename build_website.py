@@ -9,17 +9,48 @@ import re
 
 
 class TomlDict:
-    def __init__(self, toml_dict):
-        self.toml_dict = toml_dict
+    def __init__(self, raw_dict):
+        self.raw_dict = raw_dict
     
     def __getitem__(self, key):
-        result = self.toml_dict
+        result = self.raw_dict
         for key_part in key.split("."):
             result = result[key_part]
         return result
+    
+    def __setitem__(self, key, value):
+        sub_dict = self.raw_dict
+        key_split = key.split(".")
+        for i, key_part in enumerate(key_split):
+            if i == len(key_split) - 1:
+                sub_dict[key_part] = value
+            else:
+                if not (
+                    (key_part in sub_dict) and
+                    (type(sub_dict[key_part]) == dict)
+                ):
+                    sub_dict[key_part] = {}
+                sub_dict = sub_dict[key_part]
+    
+    def update(self, other_toml_dict):
+        def recurse(raw_dict, other_raw_dict):
+            for key in other_raw_dict:
+                if (
+                    (key in raw_dict) and
+                    (type(raw_dict[key]) == dict) and
+                    (type(other_raw_dict[key]) == dict)
+                ):
+                    recurse(raw_dict[key], other_raw_dict[key])
+                else:
+                    raw_dict[key] = other_raw_dict[key]
+        recurse(self.raw_dict, other_toml_dict.raw_dict)
 
 
-def build_website(clean=False, config_file="config.toml"):
+def build_website(clean=False, config_files=["config.toml"]):
+    """
+    If multiple config files are provided, config options will be merged, the last files in the list taking the highest priority.
+    """
+
     os.chdir(os.path.dirname(__file__))
 
     if clean:
@@ -29,8 +60,10 @@ def build_website(clean=False, config_file="config.toml"):
 
     shutil.copytree("static_files", "website_build/site/static", dirs_exist_ok=True)
 
-    with open(config_file, "r") as file:
-        config = TomlDict(toml.load(file))
+    config = TomlDict({})
+    for config_file in config_files:
+        with open(config_file, "r") as file:
+            config.update(TomlDict(toml.load(file)))
     
     for dirpath, dirnames, filenames in os.walk("website_build"):
         for filename in filenames:
@@ -52,12 +85,13 @@ def build_website(clean=False, config_file="config.toml"):
 
 
 if __name__ == "__main__":
+    os.chdir(os.path.dirname(__file__))
     argument_parser = argparse.ArgumentParser()
     argument_parser.add_argument("--clean", action="store_true")
-    argument_parser.add_argument("--config-file", "-f", required=False)
+    argument_parser.add_argument("--config-files", "-f", nargs="+", required=False)
     arguments = argument_parser.parse_args()
     kwargs = {}
     kwargs["clean"] = arguments.clean
-    if arguments.config_file:
-        kwargs["config_file"] = arguments.config_file
+    if arguments.config_files:
+        kwargs["config_files"] = arguments.config_files
     build_website(**kwargs)

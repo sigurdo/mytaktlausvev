@@ -28,15 +28,19 @@ Each config option has one of the following variable types:
 - **Visible text** is a very easy-to-understand variable type. The text is visible to the user in some specific contexts. In other words, the required format is a human-readable string.
 - **Color code** should be the hex code for a color, e.g. `#FF0000`.
 - **Static file path** should be the relative path to a file in the [`static_files`](static_files/), relative to the [`static_files`](static_files/) directory itself. It can also be a static file path to one of the static files in the website source code.
+- **Context dependent** A piece of text to be used in a specific context. Use common sense, e.g. avoid æøå and other special characters when they are not appropriate.
 
 ### Full config options reference
 
-| Option                             | Variable type        | Description                               |
-| ---------------------------------- | -------------------- | ----------------------------------------- |
-| `appearance.base_page_title`       | **Visible text**     | Base for page title shown in browser tab. |
-| `appearance.primary_color`         | **Color code**       | Primary color on entire site.             |
-| `appearance.icon`                  | **Static file path** | Icon shown in browser tab.                |
-| `appearance.navbar.logo`           | **Static file path** | Logo shown in navbar.                     |
-| `appearance.navbar.logo_santa_hat` | **Static file path** | Logo shown in navbar in December.         |
-| `appearance.navbar.title`          | **Visible text**     | Title shown in navbar.                    |
-
+| Option                             | Variable type         | Description                                                |
+| ---------------------------------- | --------------------- | ---------------------------------------------------------- |
+| `appearance.base_page_title`       | **Visible text**      | Base for page title shown in browser tab.                  |
+| `appearance.primary_color`         | **Color code**        | Primary color on entire site.                              |
+| `appearance.icon`                  | **Static file path**  | Icon shown in browser tab.                                 |
+| `appearance.navbar.logo`           | **Static file path**  | Logo shown in navbar.                                      |
+| `appearance.navbar.logo_santa_hat` | **Static file path**  | Logo shown in navbar in December.                          |
+| `appearance.navbar.title`          | **Visible text**      | Title shown in navbar.                                     |
+| `initial_data.orchestra_name`      | **Visible text**      | Name of student orchestra used in initial data generation. |
+| `initial_data.superuser.username`  | **Context dependent** | Username for superuser.                                    |
+| `initial_data.superuser.email`     | **Context dependent** | Email for superuser.                                       |
+| `initial_data.superuser.password`  | **Context dependent** | Password for superuser.                                    |

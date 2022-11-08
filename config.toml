@@ -5,6 +5,14 @@ favicon = "images/taktlausfavicon.ico"
 
 [appearance.navbar]
 logo = "images/taktlauslogo.svg"
-logo_santa_hat = "images/taktlauslogo_sant_hat.svg"
+logo_santa_hat = "images/taktlauslogo_santa_hat.svg"
 title = "Studentorchesteret Dei Taktlause"
 development_background_color = "#058104"
+
+[initial_data]
+orchestra_name = "Studentorchesteret Dei Taktlause"
+
+[initial_data.superuser]
+username = "vevansvarleg"
+email = "vevansvarleg@taktlaus.no"
+password = "password"

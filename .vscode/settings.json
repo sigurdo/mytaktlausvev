@@ -3,8 +3,13 @@
         "commands": [
             {
                 "match": "config.toml",
-                "cmd": "./build_website.py -f ${file}"
+                "cmd": "./build_website.py --config-files config.toml ${file}"
             }
         ],
+    },
+    "editor.quickSuggestions": {
+        "other": "on",
+        "comments": "on",
+        "strings": "on"
     }
 }
