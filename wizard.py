@@ -21,7 +21,7 @@ def wizard():
             break
         print('Venlegast skriv anten "prod" eller "dev".')
     if production:
-        subprocess.call("./scripts/reset_production_with_initial_data.sh", shell=True)
+        subprocess.call("./website_build/scripts/reset_production_with_initial_data.sh", shell=True)
     else:
         subprocess.call("./website_build/scripts/reset_with_initial_data.sh", shell=True)
     print("Oppsett er ferdig.")
