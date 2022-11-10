@@ -6,7 +6,10 @@ import os
 import subprocess
 import time
 import tomlkit
+from prompt_toolkit import PromptSession
+from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
 from build_website import TomlDict
+from prompt_utils import create_prompt_session
 
 class VariableValidator:
     def __init__(self, variable_name, variable_value):
@@ -72,12 +75,15 @@ high_level_config_entries = [
 ]
 
 
-def create_config():
+def create_config(prompt_session: PromptSession):
     toml_dict = TomlDict({})
     for entry in high_level_config_entries:
         while True:
             default_value_text = "" if entry.default_value is None else f" (default: {entry.default_value})"
-            value = input(f"{entry.description}{default_value_text}: ") or entry.default_value
+            value = prompt_session.prompt(
+                f"{entry.description}{default_value_text}: ",
+                auto_suggest=AutoSuggestFromHistory(),
+            ) or entry.default_value
             validator = entry.validator_class(entry.description, value)
             try:
                 validator.validate()
@@ -91,7 +97,7 @@ def create_config():
         for option in config_options:
             toml_dict[option] = config_options[option]
 
-    output_file_path = input("Lagre konfigurasjon som (default: config.toml): ") or "config.toml"
+    output_file_path = prompt_session.prompt("Lagre konfigurasjon som (default: config.toml): ") or "config.toml"
     output_file_is_default = os.path.abspath(output_file_path) == os.path.abspath("config.toml")
 
     if output_file_is_default:
@@ -116,7 +122,7 @@ def create_config():
 if __name__ == "__main__":
     os.chdir(os.path.dirname(__file__))
     argument_parser = argparse.ArgumentParser()
-    for parameter in inspect.signature(create_config).parameters:
+    for parameter in list(inspect.signature(create_config).parameters)[1:]:
         argument_parser.add_argument(parameter)
     arguments = argument_parser.parse_args()
-    create_config(**vars(arguments))
+    create_config(create_prompt_session(), **vars(arguments))

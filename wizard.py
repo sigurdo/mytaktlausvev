@@ -5,17 +5,20 @@ import inspect
 import os
 import subprocess
 import time
+from prompt_toolkit import PromptSession
 from create_config import create_config
 from build_website import build_website
+from prompt_utils import create_prompt_session
 
-def wizard():
+
+def wizard(prompt_session: PromptSession):
     print("Hei, eg er mytaktlausvev-trollmannen.")
     print("Eg hjelper deg med å konfigurere ein studentorchestervev basert på taktlausveven.")
-    config_file_path = create_config()
+    config_file_path = create_config(prompt_session)
     build_website(config_files=["config.toml", config_file_path])
     print("Set du opp ein ekte produksjons-tjenar (prod) eller ein lokal utviklingsversjon (dev)?")
     while True:
-        prod_or_dev = input("prod/dev: ").lower()
+        prod_or_dev = prompt_session.prompt("prod/dev: ").lower()
         if prod_or_dev in ["prod", "dev"]:
             production = prod_or_dev == "prod"
             break
@@ -30,7 +33,7 @@ def wizard():
     print('Logg inn med brukernavnet "vevansvarleg" og passordet "passord".')
     print("Vil du starte opp tjenaren nå?")
     while True:
-        yes_or_no = input("ja/nei: ").lower()
+        yes_or_no = prompt_session.prompt("ja/nei: ").lower()
         if yes_or_no in ["ja", "nei"]:
             start_server = yes_or_no == "ja"
             break
@@ -50,7 +53,7 @@ def wizard():
 if __name__ == "__main__":
     os.chdir(os.path.dirname(__file__))
     argument_parser = argparse.ArgumentParser()
-    for parameter in inspect.signature(wizard).parameters:
+    for parameter in list(inspect.signature(wizard).parameters)[1:]:
         argument_parser.add_argument(parameter)
     arguments = argument_parser.parse_args()
-    wizard(**vars(arguments))
+    wizard(create_prompt_session(), **vars(arguments))
