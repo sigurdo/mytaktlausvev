@@ -6,6 +6,7 @@ import shutil
 import argparse
 import tomlkit
 import re
+import plac
 
 
 class TomlDict:
@@ -49,10 +50,15 @@ class TomlDict:
         return self.raw_dict
 
 
-def build_website(clean=False, config_files=["config.toml"]):
+@plac.flg("clean")
+@plac.opt("base_config_file", abbrev="b")
+@plac.pos("extra_config_files", type=lambda files: files.split(","), help="Comma separated extra config files, e.g. config1.toml,config2.toml")
+def build_website(clean=False, base_config_file="config.toml", extra_config_files=[]):
     """
-    If multiple config files are provided, config options will be merged, the last files in the list taking the highest priority.
+    Config options from `base_config_file` and `extra_config_files` will be merged, the later entries of `extra_config_files` taking higher priority and `base_config_file` taking the lowest priority.
     """
+
+    config_files = [base_config_file, *extra_config_files]
 
     os.chdir(os.path.dirname(__file__))
 
@@ -89,12 +95,4 @@ def build_website(clean=False, config_files=["config.toml"]):
 
 if __name__ == "__main__":
     os.chdir(os.path.dirname(__file__))
-    argument_parser = argparse.ArgumentParser()
-    argument_parser.add_argument("--clean", action="store_true")
-    argument_parser.add_argument("--config-files", "-f", nargs="+", required=False)
-    arguments = argument_parser.parse_args()
-    kwargs = {}
-    kwargs["clean"] = arguments.clean
-    if arguments.config_files:
-        kwargs["config_files"] = arguments.config_files
-    build_website(**kwargs)
+    plac.call(build_website)

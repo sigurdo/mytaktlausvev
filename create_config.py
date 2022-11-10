@@ -6,6 +6,7 @@ import os
 import subprocess
 import time
 import tomlkit
+import plac
 from prompt_toolkit import PromptSession
 from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
 from build_website import TomlDict
@@ -109,20 +110,22 @@ def create_config(prompt_session: PromptSession):
     with open(output_file_path, "w") as file:
         tomlkit.dump(toml_dict.get_tomlkit_document(), file)
 
+    return output_file_path
+
+
+def create_config_cli():
+    prompt_session = create_prompt_session()
+    output_file_path = create_config(prompt_session)
+
+    output_file_is_default = os.path.abspath(output_file_path) == os.path.abspath("config.toml")
     config_files_flag = "" if output_file_is_default else f"-f config.toml {output_file_path} "
 
-    # print("Tada! Du kan nå bygge vevsidea, initialisere databasa og starte han opp med følgande kommando:")
-    # print(f"./build_website.py {config_files_flag}&& ./website_build/scripts/reset_with_initial_data.sh && ./website_build/scripts/up.sh")
-    # print("Deretter kan opne http://localhost:8000/wiki/kom-i-gang/ i nettlesaren din.")
-    # print("Logg inn med brukarnavnet vevansvarleg og passordet passord.")
-
-    return output_file_path
+    print("Tada! Du kan nå bygge vevsidea, initialisere databasa og starte han opp med følgande kommando:")
+    print(f"./build_website.py {config_files_flag}&& ./website_build/scripts/reset_with_initial_data.sh && ./website_build/scripts/up.sh")
+    print("Deretter kan opne http://localhost:8000/wiki/kom-i-gang/ i nettlesaren din.")
+    print("Logg inn med brukarnavnet vevansvarleg og passordet passord.")
 
 
 if __name__ == "__main__":
     os.chdir(os.path.dirname(__file__))
-    argument_parser = argparse.ArgumentParser()
-    for parameter in list(inspect.signature(create_config).parameters)[1:]:
-        argument_parser.add_argument(parameter)
-    arguments = argument_parser.parse_args()
-    create_config(create_prompt_session(), **vars(arguments))
+    plac.call(create_config_cli)

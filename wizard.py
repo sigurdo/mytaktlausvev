@@ -5,17 +5,18 @@ import inspect
 import os
 import subprocess
 import time
-from prompt_toolkit import PromptSession
+import plac
 from create_config import create_config
 from build_website import build_website
 from prompt_utils import create_prompt_session
 
 
-def wizard(prompt_session: PromptSession):
+def wizard():
+    prompt_session = create_prompt_session()
     print("Hei, eg er mytaktlausvev-trollmannen.")
     print("Eg hjelper deg med å konfigurere ein studentorchestervev basert på taktlausveven.")
     config_file_path = create_config(prompt_session)
-    build_website(config_files=["config.toml", config_file_path])
+    build_website(extra_config_files=[config_file_path])
     print("Set du opp ein ekte produksjons-tjenar (prod) eller ein lokal utviklingsversjon (dev)?")
     while True:
         prod_or_dev = prompt_session.prompt("prod/dev: ").lower()
@@ -48,12 +49,8 @@ def wizard(prompt_session: PromptSession):
     else:
         print("Den er grei, start tjenaren når du vil med følgande kommando:")
         print(start_command)
-    
+
 
 if __name__ == "__main__":
     os.chdir(os.path.dirname(__file__))
-    argument_parser = argparse.ArgumentParser()
-    for parameter in list(inspect.signature(wizard).parameters)[1:]:
-        argument_parser.add_argument(parameter)
-    arguments = argument_parser.parse_args()
-    wizard(create_prompt_session(), **vars(arguments))
+    plac.call(wizard)
