@@ -16,3 +16,9 @@ orchestra_name = "Studentorchesteret Dei Taktlause"
 username = "vevansvarleg"
 email = "vevansvarleg@taktlaus.no"
 password = "password"
+
+[initial_data.site]
+domain = "taktlaus.no"
+
+[production]
+hosting_solution = "azure"

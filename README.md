@@ -32,15 +32,17 @@ Each config option has one of the following variable types:
 
 ### Full config options reference
 
-| Option                             | Variable type         | Description                                                |
-| ---------------------------------- | --------------------- | ---------------------------------------------------------- |
-| `appearance.base_page_title`       | **Visible text**      | Base for page title shown in browser tab.                  |
-| `appearance.primary_color`         | **Color code**        | Primary color on entire site.                              |
-| `appearance.icon`                  | **Static file path**  | Icon shown in browser tab.                                 |
-| `appearance.navbar.logo`           | **Static file path**  | Logo shown in navbar.                                      |
-| `appearance.navbar.logo_santa_hat` | **Static file path**  | Logo shown in navbar in December.                          |
-| `appearance.navbar.title`          | **Visible text**      | Title shown in navbar.                                     |
-| `initial_data.orchestra_name`      | **Visible text**      | Name of student orchestra used in initial data generation. |
-| `initial_data.superuser.username`  | **Context dependent** | Username for superuser.                                    |
-| `initial_data.superuser.email`     | **Context dependent** | Email for superuser.                                       |
-| `initial_data.superuser.password`  | **Context dependent** | Password for superuser.                                    |
+| Option                             | Variable type         | Description                                                                     |
+| ---------------------------------- | --------------------- | ------------------------------------------------------------------------------- |
+| `appearance.base_page_title`       | **Visible text**      | Base for page title shown in browser tab.                                       |
+| `appearance.primary_color`         | **Color code**        | Primary color on entire site.                                                   |
+| `appearance.icon`                  | **Static file path**  | Icon shown in browser tab.                                                      |
+| `appearance.navbar.logo`           | **Static file path**  | Logo shown in navbar.                                                           |
+| `appearance.navbar.logo_santa_hat` | **Static file path**  | Logo shown in navbar in December.                                               |
+| `appearance.navbar.title`          | **Visible text**      | Title shown in navbar.                                                          |
+| `initial_data.orchestra_name`      | **Visible text**      | Name of student orchestra used in initial data generation.                      |
+| `initial_data.superuser.username`  | **Context dependent** | Username for superuser.                                                         |
+| `initial_data.superuser.email`     | **Context dependent** | Email for superuser.                                                            |
+| `initial_data.superuser.password`  | **Context dependent** | Password for superuser.                                                         |
+| `initial_data.site.domain`         | **Context dependent** | Domain for site.                                                                |
+| `production.hosting_solution`      | **Context dependent** | The production hosting solution to use. Must be either `"azure"` or `"server"`. |
