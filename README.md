@@ -39,7 +39,8 @@ Each config option has one of the following variable types:
 | `appearance.icon`                  | **Static file path**  | Icon shown in browser tab.                                                      |
 | `appearance.navbar.logo`           | **Static file path**  | Logo shown in navbar.                                                           |
 | `appearance.navbar.logo_santa_hat` | **Static file path**  | Logo shown in navbar in December.                                               |
-| `appearance.navbar.title`          | **Visible text**      | Title shown in navbar.                                                          |
+| `appearance.navbar.title`          | **Visible text**      | Full title shown in navbar (recommended maximum 32 characters)                  |
+| `appearance.navbar.title_short`    | **Visible text**      | Short version of title shown in navbar (recommended maximum 16 characters).     |
 | `initial_data.orchestra_name`      | **Visible text**      | Name of student orchestra used in initial data generation.                      |
 | `initial_data.superuser.username`  | **Context dependent** | Username for superuser.                                                         |
 | `initial_data.superuser.email`     | **Context dependent** | Email for superuser.                                                            |

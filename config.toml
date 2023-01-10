@@ -7,6 +7,7 @@ favicon = "images/taktlausfavicon.ico"
 logo = "images/taktlauslogo.svg"
 logo_santa_hat = "images/taktlauslogo_santa_hat.svg"
 title = "Studentorchesteret Dei Taktlause"
+title_short = "Dei Taktlause"
 development_background_color = "#058104"
 
 [initial_data]
