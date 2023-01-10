@@ -7,46 +7,90 @@ import subprocess
 import time
 import tomlkit
 import plac
+
 from prompt_toolkit import PromptSession
+from prompt_toolkit.completion import Completer, Completion
+from prompt_toolkit.validation import Validator, ValidationError
+from prompt_toolkit.lexers import Lexer
+
 from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
 from build_website import TomlDict
 from prompt_utils import create_prompt_session
 
-class VariableValidator:
-    def __init__(self, variable_name, variable_value):
-        self.variable_name = variable_name
-        self.variable_value = variable_value
-    
-    def validate(self) -> bool:
-        raise Exception(f".validate() not implemented for {self.__class__}")
 
-
-class StringValidator(VariableValidator):
-    def validate(self) -> bool:
-        if type(self.variable_value) != str:
-            raise Exception(f"{self.variable_name} må vere ein tekststreng")
-
-
-class StaticFilePathValidator(StringValidator):
-    def validate(self) -> bool:
-        super().validate()
+class StaticFilePathValidator(Validator):
+    def validate(self, document):
+        text = document.text
         static_files_dir_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "static_files"))
-        if not os.path.exists(os.path.join(static_files_dir_path, self.variable_value)):
-            raise Exception(f"{self.variable_name} må vere filstien til ein fil i {static_files_dir_path}, relativt til static_files-mappa")
+        file_path = os.path.join(static_files_dir_path, text)
+        if not os.path.isfile(file_path):
+            raise ValidationError(message=f"Dette må vere filstien til ein fil i {static_files_dir_path}, relativt til static_files-mappa")
 
+
+class StaticFilePathCompleter(Completer):
+    def get_completions(self, document, complete_event):
+        word_before_cursor = document.text_before_cursor.lower()
+        static_files_dir_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "static_files"))
+        for dirpath, dirnames, filenames in os.walk(static_files_dir_path):
+            for filename in filenames:
+                filepath = os.path.join(dirpath[len(static_files_dir_path)+1:], filename)
+                if word_before_cursor in filepath:
+                    yield Completion(
+                        text=filepath,
+                        start_position=-len(word_before_cursor),
+                    )
+        return super().get_completions(document, complete_event)
+
+
+def is_valid_color_code(text):
+    return (
+        len(text) == 7
+        and text[0] == "#"
+        and all(
+            character in [str(decimal) for decimal in [*range(10), "a", "b", "c", "d", "e", "f"]]
+            for character in text[1:]
+        )
+    )
+
+
+class ColorCodeValidator(Validator):
+    def validate(self, document):
+        text = document.text.lower()
+        if not is_valid_color_code(text):
+            raise ValidationError(message="Dette må vere ei heksadesimal RGB-fargekode på formatet #<raud><grøn><blå>. Du kan til dømes bruke denne fargevelgeren: https://rgbacolorpicker.com/hex-color-picker.")
+
+
+class ColorCodeLexer(Lexer):
+    def lex_document(self, document):
+        def get_line(line_number):
+            text = document.text.lower()
+            display = [("", document.text)]
+            if is_valid_color_code(text):
+                display += [
+                    ("", " ("),
+                    (f"bg:{document.text} fg:{document.text}", " "*8),
+                    ("", ")"),
+                ]
+            return display
+
+        return get_line
 
 class HighLevelConfigEntry:
     def __init__(
         self,
         description,
         config_options_callback,
-        validator_class=StringValidator,
-        default_value=None,
+        validator=None,
+        default="",
+        completer=None,
+        lexer=None,
     ):
         self.description = description
         self.config_options_callback = config_options_callback
-        self.validator_class  = validator_class
-        self.default_value = default_value
+        self.validator = validator
+        self.default = default
+        self.completer = completer
+        self.lexer = lexer
 
 
 high_level_config_entries = [
@@ -64,14 +108,17 @@ high_level_config_entries = [
             "appearance.primary_color": theme_color,
             "appearance.navbar.development_background_color": theme_color,
         },
+        default="#",
+        validator=ColorCodeValidator(),
+        lexer=ColorCodeLexer(),
     ),
     HighLevelConfigEntry(
         "Logo",
         lambda logo_path: {
             "appearance.navbar.logo": logo_path,
         },
-        validator_class=StaticFilePathValidator,
-        default_value="images/taktlauslogo.svg",
+        validator=StaticFilePathValidator(),
+        completer=StaticFilePathCompleter(),
     ),
 ]
 
@@ -79,26 +126,21 @@ high_level_config_entries = [
 def create_config(prompt_session: PromptSession):
     toml_dict = TomlDict({})
     for entry in high_level_config_entries:
-        while True:
-            default_value_text = "" if entry.default_value is None else f" (default: {entry.default_value})"
-            value = prompt_session.prompt(
-                f"{entry.description}{default_value_text}: ",
-                auto_suggest=AutoSuggestFromHistory(),
-            ) or entry.default_value
-            validator = entry.validator_class(entry.description, value)
-            try:
-                validator.validate()
-            except Exception as exception:
-                print(f"{value} er ikkje gyldig: {exception}")
-                continue
-            break
+        value = prompt_session.prompt(
+            f"{entry.description}: ",
+            auto_suggest=AutoSuggestFromHistory(),
+            validator=entry.validator,
+            completer=entry.completer,
+            lexer=entry.lexer,
+            default=entry.default,
+        )
 
         config_options = entry.config_options_callback(value)
 
         for option in config_options:
             toml_dict[option] = config_options[option]
 
-    output_file_path = prompt_session.prompt("Lagre konfigurasjon som (default: config.toml): ") or "config.toml"
+    output_file_path = prompt_session.prompt("Lagre konfigurasjon som: ", default="config.toml")
     output_file_is_default = os.path.abspath(output_file_path) == os.path.abspath("config.toml")
 
     if output_file_is_default:
