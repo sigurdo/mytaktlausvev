@@ -3,7 +3,7 @@
         "commands": [
             {
                 "match": "config.toml",
-                "cmd": "./build_website.py --config-files config.toml ${file}"
+                "cmd": "./build_website.py -b config.toml ${file}"
             }
         ],
     },

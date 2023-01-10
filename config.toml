@@ -22,3 +22,7 @@ domain = "taktlaus.no"
 
 [production]
 hosting_solution = "azure"
+
+[readme]
+project_title = "Taktlausveven"
+orchestra_name = "Studentorchesteret Dei Taktlause"

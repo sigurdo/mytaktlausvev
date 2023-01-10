@@ -46,3 +46,5 @@ Each config option has one of the following variable types:
 | `initial_data.superuser.password`  | **Context dependent** | Password for superuser.                                                         |
 | `initial_data.site.domain`         | **Context dependent** | Domain for site.                                                                |
 | `production.hosting_solution`      | **Context dependent** | The production hosting solution to use. Must be either `"azure"` or `"server"`. |
+| `readme.project_title`             | **Visible text**      | Project title used in `README.md`.                                              |
+| `readme.orchestra_name`            | **Visible text**      | Name of student orchestra used in `README.md`.                                  |
