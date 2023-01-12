@@ -1,3 +1,5 @@
 tomlkit
 prompt-toolkit
 plac
+pillow
+svglib

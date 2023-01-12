@@ -2,6 +2,7 @@
 
 import argparse
 import inspect
+import io
 import os
 import subprocess
 import time
@@ -17,11 +18,19 @@ from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
 from build_website import TomlDict
 from prompt_utils import create_prompt_session
 
+from PIL import Image
+from svglib.svglib import svg2rlg
+from reportlab.graphics import renderPM
+
+
+def get_static_files_dir_path():
+    return os.path.abspath(os.path.join(os.path.dirname(__file__), "static_files"))
+
 
 class StaticFilePathValidator(Validator):
     def validate(self, document):
         text = document.text
-        static_files_dir_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "static_files"))
+        static_files_dir_path = get_static_files_dir_path()
         file_path = os.path.join(static_files_dir_path, text)
         if not os.path.isfile(file_path):
             raise ValidationError(message=f"Dette må vere filstien til ein fil i {static_files_dir_path}, relativt til static_files-mappa")
@@ -30,7 +39,7 @@ class StaticFilePathValidator(Validator):
 class StaticFilePathCompleter(Completer):
     def get_completions(self, document, complete_event):
         word_before_cursor = document.text_before_cursor.lower()
-        static_files_dir_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "static_files"))
+        static_files_dir_path = get_static_files_dir_path()
         for dirpath, dirnames, filenames in os.walk(static_files_dir_path):
             for filename in filenames:
                 filepath = os.path.join(dirpath[len(static_files_dir_path)+1:], filename)
@@ -93,6 +102,29 @@ class HighLevelConfigEntry:
         self.lexer = lexer
 
 
+def convert_to_ico(logo_path):
+    static_files_dir_path = get_static_files_dir_path()
+    ico_path = f"{os.path.splitext(logo_path)[0]}.ico"
+    try:
+        with open(os.path.join(static_files_dir_path, logo_path), "rb") as file:
+            logo = io.BytesIO(file.read())
+        if os.path.splitext(logo_path)[1] == ".svg":
+                drawing = svg2rlg(logo)
+                logo = io.BytesIO()
+                renderPM.drawToFile(drawing, logo, fmt="PNG")
+        Image.open(
+            logo
+        ).save(
+            os.path.join(static_files_dir_path, ico_path)
+        )
+    except Exception as exception:
+        print(exception)
+        print("Logoen kunne ikkje konverterast automatisk til .ico-fil.")
+        print(f"Du må difor konvertere til den til ei .ico-fil på eiga hand og leggje ho inn med filstien {os.path.join(static_files_dir_path, ico_path)}.")
+        print("Du kan fullføre trollmannen før du gjer dette.")
+    return ico_path
+
+
 high_level_config_entries = [
     HighLevelConfigEntry(
         "Navn på orchester",
@@ -116,6 +148,7 @@ high_level_config_entries = [
         "Logo",
         lambda logo_path: {
             "appearance.navbar.logo": logo_path,
+            "appearance.favicon": convert_to_ico(logo_path),
         },
         validator=StaticFilePathValidator(),
         completer=StaticFilePathCompleter(),
