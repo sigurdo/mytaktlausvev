@@ -39,6 +39,19 @@ class StaticFilePathValidator(Validator):
             raise ValidationError(message=f"Dette må vere filstien til ein fil i {static_files_dir_path}, relativt til static_files-mappa")
 
 
+class FilePathCompleter(Completer):
+    def get_completions(self, document, complete_event):
+        word_before_cursor = document.text_before_cursor.lower()
+        dir_path = f"{os.path.dirname(word_before_cursor)}"
+        for entry in os.listdir(dir_path or "./"):
+            path = os.path.join(dir_path, entry)
+            if word_before_cursor in path:
+                yield Completion(
+                    text=path,
+                    start_position=-len(word_before_cursor),
+                )
+
+
 class StaticFilePathCompleter(Completer):
     def get_completions(self, document, complete_event):
         word_before_cursor = document.text_before_cursor.lower()
@@ -165,6 +178,7 @@ high_level_config_entries = [
         lambda orchestra_name: {
             "appearance.base_page_title": orchestra_name,
             "appearance.navbar.title": orchestra_name,
+            "appearance.navbar.title_short": "",
             "initial_data.orchestra_name": orchestra_name,
         },
     ),
@@ -229,7 +243,6 @@ def create_config(prompt_session: PromptSession):
 
         value = prompt_session.prompt(
             f"{entry.description}: ",
-            auto_suggest=AutoSuggestFromHistory(),
             validator=entry.validator,
             completer=entry.completer,
             lexer=entry.lexer,
@@ -241,11 +254,10 @@ def create_config(prompt_session: PromptSession):
         for option in config_options:
             toml_dict[option] = config_options[option]
 
-    output_file_path = prompt_session.prompt("Lagre konfigurasjon som: ", default="config.toml")
-    output_file_is_default = os.path.abspath(output_file_path) == os.path.abspath("config.toml")
+    output_file_path = prompt_session.prompt("Lagre konfigurasjon som: ", default="config.toml", completer=FilePathCompleter())
 
-    if output_file_is_default:
-        with open("config.toml", "r") as file:
+    if os.path.exists(output_file_path):
+        with open(output_file_path, "r") as file:
             previous_config = TomlDict(tomlkit.load(file))
             previous_config.update(toml_dict)
             toml_dict = previous_config

@@ -36,10 +36,11 @@ class TomlDict:
     def update(self, other_toml_dict):
         def recurse(raw_dict, other_raw_dict):
             for key in other_raw_dict:
+                tomlkit_table_types = [tomlkit.items.Table, tomlkit.container.OutOfOrderTableProxy]
                 if (
                     (key in raw_dict) and
-                    (type(raw_dict[key]) == tomlkit.items.Table) and
-                    (type(other_raw_dict[key]) == tomlkit.items.Table)
+                    (type(raw_dict[key]) in tomlkit_table_types) and
+                    (type(other_raw_dict[key]) in tomlkit_table_types)
                 ):
                     recurse(raw_dict[key], other_raw_dict[key])
                 else:
@@ -73,7 +74,7 @@ def build_website(clean=False, base_config_file="config.toml", extra_config_file
     for config_file in config_files:
         with open(config_file, "r") as file:
             config.update(TomlDict(tomlkit.load(file)))
-    
+
     for dirpath, dirnames, filenames in os.walk("website_build"):
         for filename in filenames:
             filepath = os.path.join(dirpath, filename)

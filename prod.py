@@ -23,7 +23,7 @@ def prod_is_running():
     return prod_get_process_id() is not None
 
 
-def prod_start(log_file_path):
+def prod_start(log_file_path=os.path.join(os.path.dirname(__file__), "prod_log.txt")):
     if prod_is_running():
         print("Production server is already running")
         return
