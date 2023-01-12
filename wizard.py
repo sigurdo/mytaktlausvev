@@ -6,10 +6,12 @@ import os
 import subprocess
 import time
 import plac
+import tomlkit
 
 from create_config import create_config
 from build_website import build_website
 from prompt_utils import create_prompt_session
+from build_website import TomlDict
 
 
 def wizard():
@@ -17,16 +19,21 @@ def wizard():
     print("Hei, eg er mytaktlausvev-trollmannen.")
     print("Eg hjelper deg med å konfigurere ein studentorchestervev basert på taktlausveven.")
     config_file_path = create_config(prompt_session)
+    with open(config_file_path, "r") as file:
+        config = TomlDict(tomlkit.load(file))
     build_website(extra_config_files=[config_file_path])
-    print("Set du opp ein ekte produksjons-tjenar (prod) eller ein lokal utviklingsversjon (dev)?")
-    production = prompt_session.prompt_choices(["prod", "dev"]).lower() == "prod"
+    if config["production.hosting_solution"] == "server":
+        print("Er dette den serveren du faktisk skal hoste nettsida på?")
+        production = prompt_session.prompt_yes_no()
+    else:
+        production = False
     if production:
         subprocess.call("./website_build/scripts/reset_production_with_initial_data.sh", shell=True)
     else:
         subprocess.call("./website_build/scripts/reset_with_initial_data.sh", shell=True)
     print("Oppsett er ferdig.")
-    domain = "<domenet ditt>" if production else "localhost:8000"
-    print(f"Når du har starta opp tjenaren kan du opne http://{domain}/wiki/kom-i-gang/ i nettlesaren din.")
+    site_url = f'https://{config["initial_data.site.domain"]}' if production else "http://localhost:8000"
+    print(f"Når du har starta opp tjenaren kan du opne {site_url}/wiki/kom-i-gang/ i nettlesaren din.")
     print('Logg inn med brukernavnet "vevansvarleg" og passordet "passord".')
     print("Vil du starte opp tjenaren nå?")
     start_server = prompt_session.prompt_yes_no()

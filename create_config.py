@@ -13,14 +13,16 @@ from prompt_toolkit import PromptSession
 from prompt_toolkit.completion import Completer, Completion
 from prompt_toolkit.validation import Validator, ValidationError
 from prompt_toolkit.lexers import Lexer
-
 from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
-from build_website import TomlDict
-from prompt_utils import create_prompt_session
 
 from PIL import Image
 from svglib.svglib import svg2rlg
 from reportlab.graphics import renderPM
+import validators
+
+from build_website import TomlDict
+from prompt_utils import create_prompt_session, choice_validator, ChoiceCompleter
+
 
 
 def get_static_files_dir_path():
@@ -84,11 +86,30 @@ class ColorCodeLexer(Lexer):
 
         return get_line
 
+
+class DomainValidator(Validator):
+    def validate(self, document):
+        text = document.text
+        if validators.domain(text) is not True:
+            raise ValidationError(message="Dette må vere eit domene, til dømes taktlaus.no.")
+        if text[:4] == "www.":
+            raise ValidationError(message="Du skal legge inn domenet utan www foran. Det skal da funke både med og utan, viss det er sett opp DNS-peikar for begge.")
+
+
+class HostingSolutionValidator(Validator):
+    def validate(self, document):
+        text = document.text
+        if text not in ["azure", "server"]:
+            raise ValidationError(message='Du må skrive anten "azure" eller "server".\nhttps://github.com/sigurdo/mytaktlausvev/blob/main/guides/set_up_custom_student_orchestra_website/2_azure_eller_server.md')
+
+
 class HighLevelConfigEntry:
     def __init__(
         self,
         description,
         config_options_callback,
+        help_text=None,
+        alternatives=None,
         validator=None,
         default="",
         completer=None,
@@ -96,10 +117,15 @@ class HighLevelConfigEntry:
     ):
         self.description = description
         self.config_options_callback = config_options_callback
+        self.help_text = help_text
         self.validator = validator
         self.default = default
         self.completer = completer
         self.lexer = lexer
+
+        if alternatives is not None:
+            self.validator = self.validator or choice_validator(alternatives)
+            self.completer = self.completer or ChoiceCompleter(alternatives)
 
 
 def convert_to_ico(logo_path):
@@ -153,12 +179,30 @@ high_level_config_entries = [
         validator=StaticFilePathValidator(),
         completer=StaticFilePathCompleter(),
     ),
+    HighLevelConfigEntry(
+        "Domene",
+        lambda domain: {
+            "initial_data.site.domain": domain,
+        },
+        validator=DomainValidator(),
+    ),
+    HighLevelConfigEntry(
+        "Type hosting",
+        lambda hosting: {
+            "production.hosting_solution": hosting,
+        },
+        help_text="Du må nå leggje inn kva type hosting du skal bruke.\nForklaring av kva som meinast med det finner du her:\nhttps://github.com/sigurdo/mytaktlausvev/blob/main/guides/set_up_custom_student_orchestra_website/2_azure_eller_server.md.",
+        alternatives=["azure", "server"],
+    )
 ]
 
 
 def create_config(prompt_session: PromptSession):
     toml_dict = TomlDict({})
     for entry in high_level_config_entries:
+        if entry.help_text is not None:
+            print(entry.help_text)
+
         value = prompt_session.prompt(
             f"{entry.description}: ",
             auto_suggest=AutoSuggestFromHistory(),

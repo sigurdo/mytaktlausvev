@@ -33,6 +33,23 @@ class ChoiceCompleter(Completer):
                 )
 
 
+def choice_validator(choices):
+    choices_comma_or_separated = (
+        (
+            f'"{choices[0]}"'
+        )
+        if len(choices) == 1 else
+        (
+            '"' + '", "'.join(choices[:-1]) + f'" eller "{choices[-1]}"'
+        )
+    )
+    return Validator.from_callable(
+        lambda text: text in choices,
+        error_message=f"Venlegast skriv anten {choices_comma_or_separated}",
+        move_cursor_to_end=True,
+    )
+
+
 class PromptSessionCustom(PromptSession):
     def prompt(self, *args, **kwargs):
         """
@@ -51,21 +68,8 @@ class PromptSessionCustom(PromptSession):
 
     def prompt_choices(self, choices, message=None, completer=None, validator=None) -> str:
         message = message or ("/".join(choices) + ": ")
-        choices_comma_or_separated = (
-            (
-                f'"{choices[0]}"'
-            )
-            if len(choices) == 1 else
-            (
-                '"' + '", "'.join(choices[:-1]) + f'" eller "{choices[-1]}"'
-            )
-        )
         completer = completer or ChoiceCompleter(choices)
-        validator = validator or Validator.from_callable(
-            lambda text: text in choices,
-            error_message=f"Venlegast skriv anten {choices_comma_or_separated}",
-            move_cursor_to_end=True,
-        )
+        validator = validator or choice_validator(choices)
         return self.prompt(
             message,
             completer=completer,
