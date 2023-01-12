@@ -2,7 +2,7 @@
 
 ## Valg av type hosting
 
-MyTaktlausvev støtter 2 fundamentalt ulike typer hosting:
+MyTaktlausvev støtter 2 fundamentalt ulike typar hosting:
 
 - `azure`: Avansert cloud hosting hos [Azure](https://azure.microsoft.com/en-us/).
 - `server`: Meir konvensjonell hosting med Docker-konteinere på en Linux-server.
