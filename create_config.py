@@ -8,6 +8,7 @@ import subprocess
 import time
 import tomlkit
 import plac
+import re
 
 from prompt_toolkit import PromptSession
 from prompt_toolkit.completion import Completer, Completion
@@ -103,6 +104,13 @@ class HostingSolutionValidator(Validator):
             raise ValidationError(message='Du må skrive anten "azure" eller "server".\nhttps://github.com/sigurdo/mytaktlausvev/blob/main/guides/set_up_custom_student_orchestra_website/2_azure_eller_server.md')
 
 
+class UsernameValidator(Validator):
+    def validate(self, document):
+        text = document.text
+        if re.fullmatch(r"[a-z]+", text) is None:
+            raise ValidationError(message="Brukarnamnet kan berre innehalde små bokstavar fra A til Z.")
+
+
 class HighLevelConfigEntry:
     def __init__(
         self,
@@ -193,7 +201,23 @@ high_level_config_entries = [
         },
         help_text="Du må nå leggje inn kva type hosting du skal bruke.\nForklaring av kva som meinast med det finner du her:\nhttps://github.com/sigurdo/mytaktlausvev/blob/main/guides/set_up_custom_student_orchestra_website/2_azure_eller_server.md.",
         alternatives=["azure", "server"],
-    )
+    ),
+    HighLevelConfigEntry(
+        "Brukarnavn",
+        lambda username: {
+            "initial_data.superuser.username": username,
+        },
+        help_text="Du må nå leggje inn brukarnavn og passord til den fyrste superbrukaren (administrator).\nInformasjonen vil verte lagra i klartekst, så ikkje bruk eit passord du brukar andre stadar, og endre det så fort du har logga inn.",
+        default="vevansvarleg",
+        validator=UsernameValidator(),
+    ),
+    HighLevelConfigEntry(
+        "Passord",
+        lambda password: {
+            "initial_data.superuser.password": password,
+        },
+        default="password",
+    ),
 ]
 
 

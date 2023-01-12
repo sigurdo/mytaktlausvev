@@ -34,7 +34,7 @@ def wizard():
     print("Oppsett er ferdig.")
     site_url = f'https://{config["initial_data.site.domain"]}' if production else "http://localhost:8000"
     print(f"Når du har starta opp tjenaren kan du opne {site_url}/wiki/kom-i-gang/ i nettlesaren din.")
-    print('Logg inn med brukernavnet "vevansvarleg" og passordet "passord".')
+    print(f'Logg inn med brukernavnet "{config["initial_data.superuser.username"]}" og passordet "{config["initial_data.superuser.password"]}".')
     print("Vil du starte opp tjenaren nå?")
     start_server = prompt_session.prompt_yes_no()
     start_command = (
