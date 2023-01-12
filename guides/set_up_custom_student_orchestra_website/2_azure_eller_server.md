@@ -11,4 +11,6 @@ MyTaktlausvev støtter 2 fundamentalt ulike typer hosting:
 
 `server` er den typen hosting vi har skritt-for-skritt-dokumentasjon for og vert anbefala hvis du vil gjere det enkelt.
 
-Det som gjer `azure`-hostinga betre, men og meir avansert enn 
+Det som gjer `azure`-hostinga betre, men óg meir avansert enn `server`-hostinga er at tenestane database, fillagring og bildelagring vert utført separat frå kvarandre og frå django-koden. I cloud-hosting-verda brukar ein dedikerte skalerbare løysingar for slike tenestar, i staden for ein vanleg Linux-server. Med `server`-hosting vert alle tenestane utført på ein og same Linux-server og alt vert i mykje større grad sett opp automatisk.
+
+[Forrige side](1_forkunnskapar.md) | [Neste side (`azure`)](azure_3_skaffe_azure_tilgang.md) | [Neste side (`server`)](server_3_skaffe_linux_server.md)
