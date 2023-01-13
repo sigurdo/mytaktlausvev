@@ -51,31 +51,25 @@ class TomlDict:
         return self.raw_dict
 
 
-@plac.flg("clean")
-@plac.opt("base_config_file", abbrev="b")
-@plac.pos("extra_config_files", type=lambda files: files.split(","), help="Comma separated extra config files, e.g. config1.toml,config2.toml")
-def build_website(clean=False, base_config_file="config.toml", extra_config_files=[]):
-    """
-    Config options from `base_config_file` and `extra_config_files` will be merged, the later entries of `extra_config_files` taking higher priority and `base_config_file` taking the lowest priority.
-    """
-
-    config_files = [base_config_file, *extra_config_files]
-
-    os.chdir(os.path.dirname(__file__))
+def build_website(config_files, clean=False):
+    website_source_dir = os.path.join(os.path.dirname(__file__), "website_source")
+    website_build_dir = os.path.join(os.path.dirname(__file__), "website_build")
+    static_files_dir = os.path.join(os.path.dirname(__file__), "static_files")
 
     if clean:
-        subprocess.call("rm -rf website_build", shell=True)
+        if os.path.exists(website_build_dir):
+            shutil.rmtree(website_build_dir)
 
-    shutil.copytree("website_source", "website_build", dirs_exist_ok=True)
+    shutil.copytree(website_source_dir, website_build_dir, dirs_exist_ok=True)
 
-    shutil.copytree("static_files", "website_build/site/static", dirs_exist_ok=True)
+    shutil.copytree(static_files_dir, os.path.join(website_build_dir, "site/static"), dirs_exist_ok=True)
 
     config = TomlDict({})
     for config_file in config_files:
         with open(config_file, "r") as file:
             config.update(TomlDict(tomlkit.load(file)))
 
-    for dirpath, dirnames, filenames in os.walk("website_build"):
+    for dirpath, dirnames, filenames in os.walk(website_build_dir):
         for filename in filenames:
             filepath = os.path.join(dirpath, filename)
             _, extension = os.path.splitext(filepath)
@@ -94,6 +88,25 @@ def build_website(clean=False, base_config_file="config.toml", extra_config_file
                     file.write(build)
 
 
+@plac.flg("clean")
+@plac.opt("base_config_file", abbrev="b")
+@plac.pos("main_config_file")
+def build_website_cli(clean=False, base_config_file="taktlausconfig.toml", main_config_file="config.toml"):
+    """
+    Config options from `base_config_file` and `main_config_file` will be merged, `main_config_file` takes the highest priority.
+    """
+
+    config_files = [base_config_file, main_config_file]
+
+    if not os.path.exists(main_config_file):
+        if main_config_file == "config.toml":
+            config_files = [base_config_file]
+        else:
+            raise Exception(f'main_config_file "{main_config_file}" does not exist')
+
+
+    build_website(config_files, clean=clean)
+
+
 if __name__ == "__main__":
-    os.chdir(os.path.dirname(__file__))
-    plac.call(build_website)
+    plac.call(build_website_cli)
