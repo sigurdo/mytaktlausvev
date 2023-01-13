@@ -3,3 +3,4 @@ website_build
 todo.md
 prod_log.txt
 config.toml
+server_secrets.toml

@@ -1,9 +1,16 @@
+import os
+import re
+
 from prompt_toolkit import PromptSession
 from prompt_toolkit.key_binding import KeyBindings
 from prompt_toolkit.key_binding.bindings.named_commands import end_of_line
 from prompt_toolkit.output import ColorDepth
 from prompt_toolkit.completion import Completer, Completion
-from prompt_toolkit.validation import Validator
+from prompt_toolkit.validation import Validator, ValidationError
+from prompt_toolkit.lexers import Lexer
+from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
+
+import validators
 
 
 key_bindings = KeyBindings()
@@ -48,6 +55,107 @@ def choice_validator(choices):
         error_message=f"Venlegast skriv anten {choices_comma_or_separated}",
         move_cursor_to_end=True,
     )
+
+
+class FilePathCompleter(Completer):
+    def __init__(self, start_dir="./", recursive=False):
+        self.start_dir = start_dir
+        self.recursive = recursive
+
+    def get_completions(self, document, complete_event):
+        word_before_cursor = document.text_before_cursor.lower()
+        if self.recursive:
+            for dirpath, dirnames, filenames in os.walk(self.start_dir):
+                for filename in filenames:
+                    filepath = os.path.join(dirpath[len(self.start_dir)+1:], filename)
+                    if word_before_cursor in filepath:
+                        yield Completion(
+                            text=filepath,
+                            start_position=-len(word_before_cursor),
+                        )
+        else:
+            dir_path = f"{os.path.join(self.start_dir, os.path.dirname(word_before_cursor))}"
+            for entry in os.listdir(dir_path or self.start_dir):
+                path = os.path.join(dir_path, entry)
+                if word_before_cursor in path:
+                    yield Completion(
+                        text=path,
+                        start_position=-len(word_before_cursor),
+                    )
+
+
+class FilePathIsFileValidator(Validator):
+    def __init__(self, start_dir="./"):
+        self.start_dir = start_dir
+
+    def validate(self, document):
+        file_path = os.path.join(self.start_dir, document.text)
+        if not os.path.isfile(file_path):
+            raise ValidationError(message=f"Dette må vere den relative filstien til ein fil i mappa {self.start_dir}.")
+
+
+def is_valid_color_code(text):
+    return (
+        len(text) == 7
+        and text[0] == "#"
+        and all(
+            character in [str(decimal) for decimal in [*range(10), "a", "b", "c", "d", "e", "f"]]
+            for character in text[1:]
+        )
+    )
+
+
+class ColorCodeValidator(Validator):
+    def validate(self, document):
+        text = document.text.lower()
+        if not is_valid_color_code(text):
+            raise ValidationError(message="Dette må vere ei heksadesimal RGB-fargekode på formatet #<raud><grøn><blå>. Du kan til dømes bruke denne fargevelgeren: https://rgbacolorpicker.com/hex-color-picker.")
+
+
+class ColorCodeLexer(Lexer):
+    def lex_document(self, document):
+        def get_line(line_number):
+            text = document.text.lower()
+            display = [("", document.text)]
+            if is_valid_color_code(text):
+                display += [
+                    ("", " ("),
+                    (f"bg:{document.text} fg:{document.text}", " "*8),
+                    ("", ")"),
+                ]
+            return display
+
+        return get_line
+
+
+class DomainValidator(Validator):
+    def validate(self, document):
+        text = document.text
+        if validators.domain(text) is not True:
+            raise ValidationError(message="Dette må vere eit domene, til dømes taktlaus.no.")
+        if text[:4] == "www.":
+            raise ValidationError(message="Du skal legge inn domenet utan www foran. Det skal da funke både med og utan, viss det er sett opp DNS-peikar for begge.")
+
+
+class HostingSolutionValidator(Validator):
+    def validate(self, document):
+        text = document.text
+        if text not in ["azure", "server"]:
+            raise ValidationError(message='Du må skrive anten "azure" eller "server".\nhttps://github.com/sigurdo/mytaktlausvev/blob/main/guides/set_up_custom_student_orchestra_website/2_azure_eller_server.md')
+
+
+class EmailValidator(Validator):
+    def validate(self, document):
+        text = document.text
+        if validators.email(text) is not True:
+            raise ValidationError(message="Dette må vere ei epost-addresse.")
+
+
+class UsernameValidator(Validator):
+    def validate(self, document):
+        text = document.text
+        if re.fullmatch(r"[a-z]+", text) is None:
+            raise ValidationError(message="Brukarnamnet kan berre innehalde små bokstavar fra A til Z.")
 
 
 class PromptSessionCustom(PromptSession):

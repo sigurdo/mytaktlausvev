@@ -68,12 +68,13 @@ def build_website(config_files, clean=False):
     for config_file in config_files:
         with open(config_file, "r") as file:
             config.update(TomlDict(tomlkit.load(file)))
+    
 
     for dirpath, dirnames, filenames in os.walk(website_build_dir):
         for filename in filenames:
             filepath = os.path.join(dirpath, filename)
             _, extension = os.path.splitext(filepath)
-            if extension in [".py", ".html", ".scss", ".js", ".md", ".conf"]:
+            if extension in [".py", ".html", ".scss", ".js", ".md", ".conf", ".env"]:
                 with open(filepath, "r") as file:
                     build = file.read()
                 while True:
@@ -81,29 +82,49 @@ def build_website(config_files, clean=False):
                     if match is None:
                         break
                     variable = match.group(1)
-                    print(filepath, end=":\n")
                     print("Replacing", variable, "with", config[variable])
                     build = build[:match.start()] + config[variable] + build[match.end():]
                 with open(filepath, "w") as file:
                     file.write(build)
 
 
-@plac.flg("clean")
-@plac.opt("base_config_file", abbrev="b")
 @plac.pos("main_config_file")
-def build_website_cli(clean=False, base_config_file="taktlausconfig.toml", main_config_file="config.toml"):
+@plac.opt("base_config_file", abbrev="b")
+@plac.opt("server_secrets_file", abbrev="s")
+@plac.flg("clean")
+def build_website_cli(
+    main_config_file=os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.toml"),
+    base_config_file=os.path.join(os.path.dirname(os.path.abspath(__file__)), "taktlausconfig.toml"),
+    server_secrets_file=os.path.join(os.path.dirname(os.path.abspath(__file__)), "server_secrets.toml"),
+    clean=False,
+):
     """
-    Config options from `base_config_file` and `main_config_file` will be merged, `main_config_file` takes the highest priority.
+    Config options will be merged, `base_config_file` takes the lowest priority and `server_secrets_file` takes the highest priority. `base_config_file` and `server_secrets_file` will be ignored if they don't exist.
+
+    Examples usage:
+    Normal:
+    ./build_website.py
+
+    Use custom config file:
+    ./build_website.py taktfullconfig.toml
+
+    Use custom secrets file:
+    ./build_website.py -s taktfullsecrets.toml
+
+    Use custom secrets and config files:
+    ./build_website.py -s taktfullsecrets.toml taktfullconfig.toml
+
+    Use custom base config file:
+    ./build_website.py -b other_base_config.toml
     """
 
-    config_files = [base_config_file, main_config_file]
+    config_files = [base_config_file]
 
-    if not os.path.exists(main_config_file):
-        if main_config_file == "config.toml":
-            config_files = [base_config_file]
-        else:
-            raise Exception(f'main_config_file "{main_config_file}" does not exist')
+    if os.path.exists(main_config_file):
+        config_files.append(main_config_file)
 
+    if os.path.exists(server_secrets_file):
+        config_files.append(server_secrets_file)
 
     build_website(config_files, clean=clean)
 
