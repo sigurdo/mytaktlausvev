@@ -205,6 +205,8 @@ high_level_config_entries = [
         "Domene",
         lambda domain: {
             "initial_data.site.domain": domain,
+            "nginx.http_server_name": f"{domain} www.{domain}",
+            "nginx.https_server_name": f"{domain} www.{domain}",
         },
         validator=DomainValidator(),
     ),

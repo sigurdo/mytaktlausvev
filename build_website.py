@@ -79,7 +79,7 @@ def build_website(clean=False, base_config_file="config.toml", extra_config_file
         for filename in filenames:
             filepath = os.path.join(dirpath, filename)
             _, extension = os.path.splitext(filepath)
-            if extension in [".py", ".html", ".scss", ".js", ".md"]:
+            if extension in [".py", ".html", ".scss", ".js", ".md", ".conf"]:
                 with open(filepath, "r") as file:
                     build = file.read()
                 while True:

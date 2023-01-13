@@ -49,3 +49,5 @@ Each config option has one of the following variable types:
 | `production.hosting_solution`      | **Context dependent** | The production hosting solution to use. Must be either `"azure"` or `"server"`. |
 | `readme.project_title`             | **Visible text**      | Project title used in `README.md`.                                              |
 | `readme.orchestra_name`            | **Visible text**      | Name of student orchestra used in `README.md`.                                  |
+| `nginx.http_server_name`           | **Context dependent** | Space separated list of domains for the NGINX HTTP server                       |
+| `nginx.https_server_name`          | **Context dependent** | Space separated list of domains for the NGINX HTTPS server                      |

@@ -27,3 +27,8 @@ hosting_solution = "azure"
 [readme]
 project_title = "Taktlausveven"
 orchestra_name = "Studentorchesteret Dei Taktlause"
+
+[nginx]
+http_server_name = "taktlaus.no www.taktlaus.no"
+https_server_name = "taktlaus.no www.taktlaus.no"
+
