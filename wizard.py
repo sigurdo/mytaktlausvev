@@ -196,15 +196,9 @@ def wizard(config_file=None, server_secrets_file=None):
     print("Oppsett er ferdig.")
     site_url = f'https://{domain}' if production else "http://localhost:8000"
     if production:
-        print("Vil du starte opp serveren nå?")
-        start_server = prompt_session.prompt_yes_no()
-        if start_server:
-            prod_start()
-            print("Produksjonsserveren startar no opp i bakgrunnen. Dette kan ta nokre minutt.")
-            print("Du kan stoppe serveren med ./prod.py stop")
-        else:
-            print("Den er grei. Isåfall kan du starte serveren sjøl med følgande kommando:")
-            print("./prod.py start")
+        prod_start()
+        print("Produksjonsserveren startar no opp i bakgrunnen. Dette kan ta nokre minutt.")
+        print("Du kan stoppe serveren med ./prod.py stop")
     else:
         print("Du kan nå starte opp den lokale utviklingsserveren din med følgande kommando:")
         print("./website_build/scripts/up.sh")
