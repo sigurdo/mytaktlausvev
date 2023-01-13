@@ -8,6 +8,7 @@ import plac
 import re
 
 from build_website import build_website, build_website_cli
+from prompt_utils import create_prompt_session
 
 
 def r(*path):
@@ -73,7 +74,35 @@ def prod_rebuild():
     prod_start()
 
 
-def prod(operation):
+def prod_store_backup(backup_file, docker_container):
+    subprocess.run(f"docker exec -t {docker_container} pg_dumpall -c -U taktlaus > {backup_file}", shell=True)
+
+
+def prod_restore_backup(backup_file, docker_container):
+    print("Resoring a backup means wiping all current database data.")
+    print("Are you sure you want to proceed?")
+    if not create_prompt_session().prompt_yes_no():
+        return
+    prod_stop()
+    run_in_dir(
+        r("website_build"),
+        lambda: subprocess.run("docker-compose -f docker-compose.prod.yaml down -v --remove-orphans", shell=True),
+    )
+    run_in_dir( 
+        r("website_build"),
+        lambda: subprocess.run("docker-compose -f docker-compose.prod.yaml up -d db", shell=True),
+    )
+    print("Waiting 30 seconds for the database to start up properly...")
+    time.sleep(30)
+    subprocess.run(f"cat {backup_file} | docker exec -i {docker_container} psql -U taktlaus -d taktlaus_db", shell=True)
+    run_in_dir(
+        r("website_build"),
+        lambda: subprocess.run("docker-compose -f docker-compose.prod.yaml down --remove-orphans", shell=True),
+    )
+    prod_start()
+
+
+def prod(operation, *args):
     """
     This is a script that can be used to manage a running production server.
     """
@@ -94,6 +123,10 @@ def prod(operation):
     #     subprocess.run("screen -R mytaktlausvev_prod", shell=True)
     elif operation == "print-log":
         subprocess.run(f"cat {log_file_path}", shell=True)
+    elif operation == "store-backup":
+        prod_store_backup(*args)
+    elif operation == "restore-backup":
+        prod_restore_backup(*args)
     else:
         print("Operation was not recognized")
 

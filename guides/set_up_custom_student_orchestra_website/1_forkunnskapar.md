@@ -7,6 +7,7 @@ Sjølv om heile prosessen er nøyaktig dokumentert skritt for skritt vert det p�
 - Linux
 - Arbeidsflyt i terminal
 - Git
+- Docker
 - Datanettverk
 - Server-hosting
 

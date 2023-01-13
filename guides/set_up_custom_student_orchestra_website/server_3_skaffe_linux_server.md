@@ -24,4 +24,4 @@ Dette skal koste ca $12/månad, eller $14/månad viss du valgte High Performance
 ssh <brukarnamn>@<IP-addresse>
 ```
 
-[Forrige side](2_azure_eller_server.md) | [Neste side](server_4_brannmur.md)
+[Forrige side](2_azure_eller_server.md) | [Neste side](server_4_serveroppsett.md)
