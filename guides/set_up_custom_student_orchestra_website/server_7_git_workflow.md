@@ -19,6 +19,7 @@ Repoet ditt har nå 2 remotes, `origin` (din eigen) og `mytaktlausvev` (det offi
 ```
 git fetch mytaktlausvev
 git merge mytaktlausvev/main
+git submodule update --init --recursive
 ```
 
 [Forrige side](server_6_vevoppsett.md) | [Neste side](server_8_backup.md)
