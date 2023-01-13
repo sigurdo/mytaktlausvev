@@ -66,7 +66,7 @@ def wizard(config_file=None):
             )
             with open(prod_env_path, "w") as file:
                 file.write(prod_env)
-    build_website(extra_config_files=[config_file_path])
+    build_website([os.path.join(os.path.dirname(__file__), "taktlausconfig.toml"), config_file_path])
     if production:
         subprocess.run(os.path.join(mytaktlausvev_dir, "website_build/scripts/reset_production_with_initial_data.sh"))
     else:
@@ -78,7 +78,7 @@ def wizard(config_file=None):
         start_server = prompt_session.prompt_yes_no()
         if start_server:
             prod_start()
-            print("Sånn, produksjonsserveren startar no opp i bakgrunnen. Dette kan ta nokre minutt.")
+            print("Produksjonsserveren startar no opp i bakgrunnen. Dette kan ta nokre minutt.")
             print("Du kan stoppe serveren med ./prod.py stop")
         else:
             print("Den er grei. Isåfall kan du starte serveren sjøl med følgande kommando:")
