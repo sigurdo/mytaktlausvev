@@ -4,6 +4,10 @@
             {
                 "match": "config.toml",
                 "cmd": "./build_website.py ${file}"
+            },
+            {
+                "match": "website_source",
+                "cmd": "./tests/test.py --only-count"
             }
         ],
     },

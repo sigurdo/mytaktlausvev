@@ -32,7 +32,26 @@ class TomlDict:
                 ):
                     sub_dict[key_part] = tomlkit.table()
                 sub_dict = sub_dict[key_part]
+
+    def __contains__(self, key):
+        try:
+            self[key]
+        except KeyError:
+            return False
+        return True
     
+    def __iter__(self):
+        def recurse(raw_dict):
+            tomlkit_table_types = [tomlkit.items.Table, tomlkit.container.OutOfOrderTableProxy]
+            for key in raw_dict:
+                if type(raw_dict[key]) in tomlkit_table_types:
+                    for value in recurse(raw_dict[key]):
+                        yield f"{key}.{value}"
+                else:
+                    yield key
+        return recurse(self.raw_dict)
+
+
     def update(self, other_toml_dict):
         def recurse(raw_dict, other_raw_dict):
             for key in other_raw_dict:

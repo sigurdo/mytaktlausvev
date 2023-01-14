@@ -1,0 +1,40 @@
+[readme]
+project_title = 1
+orchestra_name = 1
+
+[appearance]
+base_page_title = 1
+favicon = 1
+primary_color = 1
+
+[appearance.navbar]
+development_background_color = 1
+logo_santa_hat = 1
+logo = 1
+title = 1
+title_short = 1
+
+[production]
+hosting_solution = 3
+
+[production.server]
+[production.server.nginx]
+website_name = 5
+http_server_name = 1
+https_server_name = 1
+
+[production.server.environment]
+allowed_hosts = 1
+csrf_trusted_origins = 1
+database_password = 2
+certbot_email = 1
+
+[initial_data]
+orchestra_name = 2
+[initial_data.site]
+domain = 1
+
+[initial_data.superuser]
+username = 1
+email = 1
+password = 1
