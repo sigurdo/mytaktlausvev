@@ -10,6 +10,9 @@ title = "Studentorchesteret Dei Taktlause"
 title_short = "Dei Taktlause"
 development_background_color = "#058104"
 
+[appearance.accounts]
+orchestra_stuff_fieldset = "Taktlaus-ting"
+
 [initial_data]
 orchestra_name = "Studentorchesteret Dei Taktlause"
 

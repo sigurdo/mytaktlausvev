@@ -7,6 +7,9 @@ base_page_title = 1
 favicon = 1
 primary_color = 1
 
+[appearance.accounts]
+orchestra_stuff_fieldset = 1
+
 [appearance.navbar]
 development_background_color = 1
 logo_santa_hat = 1

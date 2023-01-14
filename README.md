@@ -71,6 +71,7 @@ Each config variable has one of the following variable types:
 | `appearance.navbar.title`                            | **Visible text**      | Full title shown in navbar (recommended maximum 32 characters)                  |
 | `appearance.navbar.title_short`                      | **Visible text**      | Short version of title shown in navbar (recommended maximum 16 characters).     |
 | `appearance.navbar.development_background_color`     | **Visible text**      | Background color of navbar when `PRODUCTION` is `0`.                            |
+| `appearance.accounts.orchestra_stuff_fieldset`       | **Visible text**      | Description of fieldset for orchestra related stuff when editing an account.    |
 | `initial_data.orchestra_name`                        | **Visible text**      | Name of student orchestra used in initial data generation.                      |
 | `initial_data.superuser.username`                    | **Context dependent** | Username for superuser.                                                         |
 | `initial_data.superuser.email`                       | **Context dependent** | Email for superuser.                                                            |
