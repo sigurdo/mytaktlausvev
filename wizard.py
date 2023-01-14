@@ -73,6 +73,7 @@ config_entries = [
             "appearance.accounts.image_sharing_consent.question": f"Kan bilete du er med i delast på {orchestra_name} sine sosiale medier?",
             "appearance.advent_calendar.title": f"{orchestra_name} Julekalender",
             "appearance.events.feed.title": orchestra_name,
+            "appearance.events.feed.filename": "hendingar.ics",
             "appearance.events.feed.description": f"Kalender for hendingane til {orchestra_name}",
             "appearance.manifest.name": f"{orchestra_name}-veven",
             "appearance.manifest.short_name": f"{orchestra_name}-veven",
