@@ -32,7 +32,7 @@ python3 -m pip install -r requirements.txt
 | Parameter             | Default value                                | Description                                           |
 | --------------------- | -------------------------------------------- | ----------------------------------------------------- |
 | `base_config_file`    | [`taktlausconfig.toml`](taktlausconfig.toml) | Base config file (lowest priority)                    |
-| `server_secrets_file` | [`server_secrets.toml](server_secrets.toml)  | Server secrets file (highest priority)                |
+| `server_secrets_file` | `server_secrets.toml`                        | Server secrets file (highest priority)                |
 | `main_config_file`    | `config.toml`                                | Main config file (medium priority)                    |
 | `clean`               | Flag, is by default not given                | Deletes everything in `website_build` before building |
 
