@@ -63,6 +63,9 @@ Each config variable has one of the following variable types:
 
 | Variable                                             | Variable type         | Description                                                                     |
 | ---------------------------------------------------- | --------------------- | ------------------------------------------------------------------------------- |
+| `domain`                                             | **Context dependent** | Domain for website.                                                             |
+| `appearance.orchestra_name`                          | **Visible text**      | Name of student orchestra.                                                      |
+| `appearance.orchestra_name_short`                    | **Visible text**      | Short version of name of student orchestra.                                     |
 | `appearance.base_page_title`                         | **Visible text**      | Base for page title shown in browser tab.                                       |
 | `appearance.primary_color`                           | **Color code**        | Primary color on entire site.                                                   |
 | `appearance.favicon`                                 | **Static file path**  | Favicon shown in browser tab.                                                   |
@@ -72,11 +75,20 @@ Each config variable has one of the following variable types:
 | `appearance.navbar.title_short`                      | **Visible text**      | Short version of title shown in navbar (recommended maximum 16 characters).     |
 | `appearance.navbar.development_background_color`     | **Visible text**      | Background color of navbar when `PRODUCTION` is `0`.                            |
 | `appearance.accounts.orchestra_stuff_fieldset`       | **Visible text**      | Description of fieldset for orchestra related stuff when editing an account.    |
-| `initial_data.orchestra_name`                        | **Visible text**      | Name of student orchestra used in initial data generation.                      |
+| `appearance.accounts.image_sharing_consent.question` | **Visible text**      | Question used to ask user for image sharing consent.                            |
+| `appearance.advent_calendar.title`                   | **Visible text**      | Title of advent calendar.                                                       |
+| `appearance.events.feed.filename`                    | **Context dependent** | Filename to use for calendar feed.                                              |
+| `appearance.events.feed.title`                       | **Visible text**      | Title to use for calendar feed.                                                 |
+| `appearance.events.feed.description`                 | **Visible text**      | Description to use for calendar feed.                                           |
+| `appearance.manifest.name`                           | **Visible text**      | App name to use for PWA manifest.                                               |
+| `appearance.manifest.short_name`                     | **Visible text**      | Short app name to use for PWA manifest.                                         |
+| `appearance.manifest.description`                    | **Visible text**      | App description to use for PWA manifest.                                        |
+| `appearance.manifest.background_color`               | **Color code**        | Background color to use for PWA manifest.                                       |
+| `appearance.manifest.theme_color`                    | **Color code**        | Theme color to use for PWA manifest.                                            |
+| `appearance.manifest.apple_touch_icon`               | **Static file path**  | Apple touch icon to use for PWA manifest.                                       |
 | `initial_data.superuser.username`                    | **Context dependent** | Username for superuser.                                                         |
 | `initial_data.superuser.email`                       | **Context dependent** | Email for superuser.                                                            |
 | `initial_data.superuser.password`                    | **Context dependent** | Password for superuser.                                                         |
-| `initial_data.site.domain`                           | **Context dependent** | Domain for site.                                                                |
 | `readme.project_title`                               | **Visible text**      | Project title used in `README.md`.                                              |
 | `readme.orchestra_name`                              | **Visible text**      | Name of student orchestra used in `README.md`.                                  |
 | `production.hosting_solution`                        | **Context dependent** | The production hosting solution to use. Must be either `"azure"` or `"server"`. |

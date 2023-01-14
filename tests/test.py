@@ -36,7 +36,7 @@ def test_count():
         for filename in filenames:
             filepath = os.path.join(dirpath, filename)
             _, extension = os.path.splitext(filepath)
-            if extension in [".py", ".html", ".scss", ".js", ".md", ".conf", ".env"]:
+            if extension in [".py", ".html", ".scss", ".js", ".md", ".conf", ".env", ".json"]:
                 with open(filepath, "r") as file:
                     content = file.read()
                 while True:

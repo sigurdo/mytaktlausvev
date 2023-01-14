@@ -1,3 +1,5 @@
+domain = 5
+
 [readme]
 project_title = 1
 orchestra_name = 1
@@ -5,10 +7,22 @@ orchestra_name = 1
 [appearance]
 base_page_title = 1
 favicon = 1
+orchestra_name = 4
+orchestra_name_short = 1
 primary_color = 1
+[appearance.manifest]
+name = 3
+short_name = 1
+description = 1
+background_color = 1
+theme_color = 1
+apple_touch_icon = 1
 
 [appearance.accounts]
-orchestra_stuff_fieldset = 1
+orchestra_stuff_fieldset = 3
+
+[appearance.accounts.image_sharing_consent]
+question = 1
 
 [appearance.navbar]
 development_background_color = 1
@@ -16,6 +30,14 @@ logo_santa_hat = 1
 logo = 1
 title = 1
 title_short = 1
+
+[appearance.advent_calendar]
+title = 1
+
+[appearance.events.feed]
+filename = 1
+title = 1
+description = 1
 
 [production]
 hosting_solution = 3
@@ -31,11 +53,6 @@ allowed_hosts = 1
 csrf_trusted_origins = 1
 database_password = 2
 certbot_email = 1
-
-[initial_data]
-orchestra_name = 2
-[initial_data.site]
-domain = 1
 
 [initial_data.superuser]
 username = 1

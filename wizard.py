@@ -64,9 +64,19 @@ config_entries = [
     HighLevelConfigEntry(
         "Navn på orchester",
         lambda orchestra_name: {
+            "appearance.orchestra_name": orchestra_name,
+            "appearance.orchestra_name_short": orchestra_name,
             "appearance.base_page_title": orchestra_name,
             "appearance.navbar.title": orchestra_name,
             "appearance.navbar.title_short": "",
+            "appearance.accounts.orchestra_stuff_fieldset": f"{orchestra_name}-ting",
+            "appearance.accounts.image_sharing_consent.question": f"Kan bilete du er med i delast på {orchestra_name} sine sosiale medier?",
+            "appearance.advent_calendar.title": f"{orchestra_name} Julekalender",
+            "appearance.events.feed.title": orchestra_name,
+            "appearance.events.feed.description": f"Kalender for hendingane til {orchestra_name}",
+            "appearance.manifest.name": f"{orchestra_name}-veven",
+            "appearance.manifest.short_name": f"{orchestra_name}-veven",
+            "appearance.manifest.description": f"Heimvevstaden til {orchestra_name}",
             "initial_data.orchestra_name": orchestra_name,
         },
     ),
@@ -75,6 +85,7 @@ config_entries = [
         lambda theme_color: {
             "appearance.primary_color": theme_color,
             "appearance.navbar.development_background_color": theme_color,
+            "appearance.manifest.theme_color": theme_color,
         },
         default="#",
         validator=prompt_utils.ColorCodeValidator(),
@@ -84,6 +95,7 @@ config_entries = [
         "Logo",
         lambda logo_path: {
             "appearance.navbar.logo": logo_path,
+            "appearance.manifest.apple_touch_icon": logo_path,
             "appearance.favicon": convert_to_ico(logo_path),
         },
         validator=prompt_utils.FilePathIsFileValidator(start_dir=r("static_files")),
@@ -92,7 +104,7 @@ config_entries = [
     HighLevelConfigEntry(
         "Domene",
         lambda domain: {
-            "initial_data.site.domain": domain,
+            "domain": domain,
             "production.server.nginx.http_server_name": f"{domain} www.{domain}",
             "production.server.nginx.https_server_name": f"{domain} www.{domain}",
             "production.server.environment.allowed_hosts": f"{domain} www.{domain}",
@@ -165,7 +177,7 @@ def wizard(config_file=None, server_secrets_file=None):
         production = prompt_session.prompt_yes_no()
     else:
         production = False
-    domain = config["initial_data.site.domain"]
+    domain = config["domain"]
     if production and os.path.isdir(r("website_build")):
         print("Det finst allereie ei website_build-mappe, som betyr at du har gjort oppsett allereie. Vil du likevel byggje kildekoden på nytt?")
         build = prompt_session.prompt_yes_no()

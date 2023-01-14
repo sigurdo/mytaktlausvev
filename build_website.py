@@ -93,7 +93,7 @@ def build_website(config_files, clean=False):
         for filename in filenames:
             filepath = os.path.join(dirpath, filename)
             _, extension = os.path.splitext(filepath)
-            if extension in [".py", ".html", ".scss", ".js", ".md", ".conf", ".env"]:
+            if extension in [".py", ".html", ".scss", ".js", ".md", ".conf", ".env", ".json"]:
                 with open(filepath, "r") as file:
                     build = file.read()
                 while True:

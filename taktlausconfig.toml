@@ -1,4 +1,8 @@
+domain = "taktlaus.no"
+
 [appearance]
+orchestra_name="Studentorchesteret Dei Taktlause"
+orchestra_name_short="Dei Taktlause"
 base_page_title = "Studentorchesteret Dei Taktlause"
 primary_color = "#A50105"
 favicon = "images/taktlausfavicon.ico"
@@ -13,14 +17,27 @@ development_background_color = "#058104"
 [appearance.accounts]
 orchestra_stuff_fieldset = "Taktlaus-ting"
 
-[initial_data]
-orchestra_name = "Studentorchesteret Dei Taktlause"
+[appearance.accounts.image_sharing_consent]
+question = "Kan bilete du er med i delast på DT sine sosiale medier?"
+
+[appearance.advent_calendar]
+title = "Taktlaus Julekalender"
+
+[appearance.events.feed]
+filename = "taktlaushendingar.ics"
+title = "Taktlauskalender"
+description = "Kalender for taktlause hendingar"
+
+[appearance.manifest]
+name = "Taktlausveven"
+short_name = "Taktlausveven"
+description = "Heimvevstaden til Studentorchesteret Dei Taktlause"
+background_color = "#ffffff"
+theme_color = "#a50104"
+apple_touch_icon = "images/taktlaus-apple-touch-icon.png"
 
 [initial_data.superuser]
 email = "vevansvarleg@taktlaus.no"
-
-[initial_data.site]
-domain = "taktlaus.no"
 
 [readme]
 project_title = "Taktlausveven"
