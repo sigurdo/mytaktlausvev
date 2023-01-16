@@ -101,8 +101,9 @@ def build_website(config_files, clean=False):
                     if match is None:
                         break
                     variable = match.group(1)
-                    print("Replacing", variable, "with", config[variable])
-                    build = build[:match.start()] + config[variable] + build[match.end():]
+                    replacement = config[variable] if variable in config else ""
+                    print("Replacing", variable, "with", replacement)
+                    build = build[:match.start()] + replacement + build[match.end():]
                 with open(filepath, "w") as file:
                     file.write(build)
 

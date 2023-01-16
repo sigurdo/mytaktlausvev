@@ -129,6 +129,7 @@ server_secrets_entries = [
         lambda email: {
             "production.server.environment.certbot_email": email,
             "production.server.environment.database_password": "".join(random.choice(string.ascii_letters + string.digits) for _ in range(32)),
+            "production.server.environment.use_local_ca": "0",
         },
         help_text="Certbot trenger ein epost-addresse for å kontakte deg om eventuelle sikkjerheitsproblem med HTTPS-sertifikatet.",
         validator=prompt_utils.EmailValidator(),

@@ -53,6 +53,7 @@ allowed_hosts = 1
 csrf_trusted_origins = 1
 database_password = 2
 certbot_email = 1
+use_local_ca = 1
 
 [initial_data.superuser]
 username = 1
