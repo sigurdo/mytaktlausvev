@@ -4,6 +4,8 @@
 
 Orchestra-specific details are made generic and configurable from [TOML](https://toml.io/en/) files.
 
+If you want to set up a website for your student orchestra as quickly and easily as possible, follow [this guide](guides/set_up_custom_student_orchestra_website/0_intro.md).
+
 ## Installation
 
 Requires Python 3 and Docker (with docker compose).
@@ -14,6 +16,8 @@ python3 -m pip install -r requirements.txt
 ```
 
 ## Setup
+
+Our wizard will automatically set up config files for you by asking you questions about your orchestra. Then she will build the website code for you and tell you how to run it. If you are already on the production server, she will even run it for you.
 
 ```
 ./wizard.py
