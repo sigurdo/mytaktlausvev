@@ -25,7 +25,7 @@ Our wizard will automatically set up config files for you by asking you question
 
 ## Usage
 
-`build_website.py` copies everything from [`webiste_source`](website_source/) into [`website_build`](website_build/) and everything from [`static_files`](static_files/) into [`website_build/site/static/`](website_build/site/static/). Then it goes through all source code files, and replaces every occurrance of `(MYTAKTLAUSVEV_VARIABLE(config_variable))` with the value of `config_variable` in the specified config. The config is obtained form merging TOML config files.
+`build_website.py` copies everything from [`webiste_source`](website_source/) into [`website_build`](website_build/) and everything from [`static_files`](static_files/) into [`website_build/site/static/`](website_build/site/static/). Then it goes through all source code files, and replaces every occurrance of `(MYTAKTLAUSVEV_VARIABLE(config_variable))` with the value of `config_variable` in the specified config. The config is obtained from merging TOML config files.
 
 ### Command line interface
 

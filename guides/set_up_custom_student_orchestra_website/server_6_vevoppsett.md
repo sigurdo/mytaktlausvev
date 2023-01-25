@@ -2,7 +2,7 @@
 
 ## Setje opp veven
 
-Det er på tide å setje opp sjølve vevsida, start med å klone MyTaktlausvev-kildekoden:
+Det er på tide å setje opp sjølve vevsida, start med å klone MyTaktlausvev-kildekoden på serveren:
 
 ```
 git clone --recurse-submodules https://github.com/sigurdo/mytaktlausvev.git
